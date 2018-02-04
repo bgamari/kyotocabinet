@@ -58,6 +58,8 @@ module Database.KyotoCabinet.Operations
        , MergeMode (..)
        , GenericDB (..)
        , merge
+         -- ** Flushing
+       , synchronize
 
          -- * Cursors
        , Cursor
@@ -212,6 +214,11 @@ merge db dbs mode = go dbs [] $ \kcdbs -> withFor2 (unDB . getDB) kcdbmerge db k
     go [] kcdbs f = f $ reverse kcdbs
     go ((GenericDB db') : dbs') kcdbs f =
       withForeignPtr (unDB . getDB $ db') $ \kcdb -> go dbs' (kcdb : kcdbs) f
+
+-------------------------------------------------------------------------------
+
+synchronize :: WithDB db => db -> Bool -> IO ()
+synchronize db hard = withFor1 (unDB . getDB) kcdbsync db hard
 
 -------------------------------------------------------------------------------
 

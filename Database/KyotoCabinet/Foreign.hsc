@@ -335,6 +335,12 @@ foreign import ccall "kclangc.h kcdbgetbulk"
 
 -- int32_t kcdbsync (KCDB *db, int32_t hard, KCFILEPROC proc, void *opq)
 
+kcdbsync:: Ptr KCDB -> Bool -> IO ()
+kcdbsync db hard =
+  kcdbsync' db (boolToInt hard) nullPtr nullPtr >>= handleBoolResult db "kcdbsync"
+foreign import ccall "kclangc.h kcdbsync"
+  kcdbsync' :: Ptr KCDB -> Int32 -> Ptr () -> Ptr () -> IO Int32
+
 -- int32_t kcdboccupy (KCDB *db, int32_t writable, KCFILEPROC proc, void *opq)
 
 kcdbcopy :: Ptr KCDB -> String -> IO ()
