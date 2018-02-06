@@ -49,6 +49,7 @@ data TreeOptions = TreeOptions { alignmentPow :: Maybe Int8
                                , pageSize :: Maybe Int64
                                , comparator :: Maybe Comparator
                                , pageCacheSize :: Maybe Int64
+                               , mmapSize :: Maybe Int64
                                }
                  deriving (Show, Read, Eq, Ord)
 
@@ -64,6 +65,7 @@ defaultTreeOptions = TreeOptions { alignmentPow = Nothing
                                  , pageSize = Nothing
                                  , comparator = Nothing
                                  , pageCacheSize = Nothing
+                                 , mmapSize = Nothing
                                  }
 
 toTuningOptions :: TreeOptions -> [TuningOption]
@@ -78,10 +80,12 @@ toTuningOptions TreeOptions { alignmentPow = ap
                             , pageSize = ps
                             , comparator = cmprtr
                             , pageCacheSize = pcs
+                            , mmapSize = mmapsz
                             } =
   mtl AlignmentPow ap ++ mtl FreePoolPow fp ++ map Options os ++ mtl Buckets bs ++
   mtl MaxSize ms ++ mtl DefragInterval di ++ mtl Compressor cmp ++ mtl CipherKey key ++
-  mtl PageSize ps ++ mtl Comparator cmprtr ++ mtl PageCacheSize pcs
+  mtl PageSize ps ++ mtl Comparator cmprtr ++ mtl PageCacheSize pcs ++
+  mtl MMapSize mmapsz
   where
     mtl f = maybeToList .  fmap f
 
